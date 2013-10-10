@@ -1,0 +1,48 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+    
+    <fragment
+        android:id="@+id/map"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/Locate"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        class="com.google.android.gms.maps.MapFragment" />
+
+    <Button
+        android:id="@+id/Path"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/map"
+        android:layout_alignRight="@+id/map"
+        android:layout_marginLeft="12dp"
+        android:layout_toRightOf="@+id/reset"
+        android:onClick="createPath"
+        android:text="Create Path" />
+
+    <Button
+        android:id="@+id/Locate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/map"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="14dp"
+        android:onClick="Locate"
+        android:text="Locate Me" />
+
+    <Button
+        android:id="@+id/reset"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/map"
+        android:layout_centerHorizontal="true"
+        android:onClick="Reset"
+        android:text="Reset" />
+    
+</RelativeLayout>
