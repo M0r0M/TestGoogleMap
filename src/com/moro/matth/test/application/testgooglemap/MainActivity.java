@@ -10,6 +10,7 @@ import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -26,6 +27,7 @@ import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
@@ -68,6 +70,8 @@ LocationListener {
 	private Polyline polyline;
 	private boolean newPolyline;
 	
+	private Polyline savedPolyline;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -101,6 +105,7 @@ LocationListener {
         }
 		
 		PathButton = (Button)findViewById(R.id.Path);
+		
 	}
 
 	@Override
@@ -163,6 +168,22 @@ LocationListener {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
+	}
+	
+	// handles the action bar
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    // Handle presses on the action bar items
+	    switch (item.getItemId()) {
+	        case R.id.save_polyline:
+	            SavePolyline();
+	            return true;
+	        case R.id.display_saved_polyline:
+	        	ShowSavedPolyline();
+	            return true;
+	        default:
+	            return super.onOptionsItemSelected(item);
+	    }
 	}
 	
 	/*
@@ -288,6 +309,7 @@ LocationListener {
     	if (polyline != null) {
     		polyline.remove();
     	}
+    	hideSavedPolyline();
     	GoToLocation(0,0,1);
     }
     
@@ -339,6 +361,52 @@ LocationListener {
     		settings.setZoomGesturesEnabled(true);
     		settings.setZoomControlsEnabled(true);
     	}
+    }
+    
+    public void SavePolyline() {
+    	if (polyline != null) {
+    		savedPolyline = gMap.addPolyline(new PolylineOptions().addAll(polyline.getPoints()));
+    		savedPolyline.setVisible(false);
+    	} else {
+    		Toast.makeText(getBaseContext(), "No polyline to save !", Toast.LENGTH_LONG).show();
+    	}
+    }
+    
+    public void ShowSavedPolyline() {
+    	if (savedPolyline == null) {
+    		Toast.makeText(getBaseContext(), "No polyline saved !", Toast.LENGTH_LONG).show();
+    	} else {
+    		if (!savedPolyline.isVisible()) {
+    			savedPolyline.setVisible(true);
+        		LatLngBounds savedPolylineBounds = getBounds(savedPolyline);
+        		gMap.animateCamera(CameraUpdateFactory.newLatLngBounds(savedPolylineBounds, 1));
+    		} else {
+    			hideSavedPolyline();
+    		}
+    	}
+    }
+    
+    public void hideSavedPolyline() {
+    	if (savedPolyline != null) { 
+    		savedPolyline.setVisible(false); 
+    	}
+    }
+    
+    private LatLngBounds getBounds (Polyline p) {
+    	List<LatLng> points = p.getPoints();
+    	double north = points.get(0).latitude;
+    	double south = north;
+    	double east = points.get(0).longitude;
+    	double west = east;
+    	for (LatLng coordinate : points) {
+    		if (coordinate.latitude > north) { north = coordinate.latitude; }
+    		if (coordinate.latitude < south) { south = coordinate.latitude; }
+    		if (coordinate.longitude > east) { east = coordinate.longitude; }
+    		if (coordinate.longitude < west) { west = coordinate.longitude; }
+    	}
+    	LatLng northWest = new LatLng(north,east); 
+    	LatLng southEast = new LatLng(south,west); 
+    	return new LatLngBounds(southEast, northWest);
     }
 
 }

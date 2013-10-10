@@ -1,9 +1,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/save_polyline"
         android:orderInCategory="100"
         android:showAsAction="never"
-        android:title="@string/action_settings"/>
+        android:title="Save Current Polyline"/>
+    
+    <item
+        android:id="@+id/display_saved_polyline"
+        android:orderInCategory="200"
+        android:showAsAction="never"
+        android:title="Show/Hide Saved Polyline"/>
 
 </menu>
